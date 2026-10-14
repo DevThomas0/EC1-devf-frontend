@@ -9,7 +9,12 @@
      4. En-tete & navigation
      5. Hero & animations
      6. Pied de page
-     7. Points de rupture
+     7. Points de rupture (mise en page generale)
+     8. Sections & filtres
+     9. Cartes (projets & formations)
+    10. Etats : loader, erreurs, resultats
+    11. Fenetres modales
+    12. Points de rupture (sections, grilles, modales)
    ========================================================================== */
 
 /* ============ 1. VARIABLES & CHARTE GRAPHIQUE ============ */
@@ -137,6 +142,26 @@ button {
 
 .muted {
   color: var(--c-text-muted);
+}
+
+/* Lien d'evitement : masque jusqu'a la prise de focus au clavier */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: var(--sp-4);
+  z-index: 100;
+  padding: var(--sp-2) var(--sp-4);
+  background-color: var(--c-primary);
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  color: #ffffff;
+  font-weight: 600;
+  transition: top var(--transition);
+}
+
+.skip-link:focus {
+  top: 0;
+  color: #ffffff;
+  text-decoration: none;
 }
 
 /* Contenu reserve aux lecteurs d'ecran */
@@ -602,5 +627,568 @@ button {
 
   .hero {
     padding: calc(var(--sp-8) * 1.4) 0;
+  }
+}
+
+/* ============ 8. SECTIONS & FILTRES ============ */
+.section {
+  padding: var(--sp-7) 0;
+}
+
+.section-alt {
+  background-color: #eef2f8;
+}
+
+.section-head {
+  max-width: 62ch;
+  margin-bottom: var(--sp-5);
+}
+
+.section-eyebrow {
+  margin-bottom: var(--sp-2);
+  color: var(--c-accent);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.section-head h2 {
+  font-size: var(--fs-xl);
+}
+
+.section-intro {
+  color: var(--c-text-muted);
+}
+
+/* --- Barre de filtres --- */
+.filters {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-5);
+  padding: var(--sp-4);
+  background-color: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+}
+
+.field label {
+  color: var(--c-text-muted);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  padding: var(--sp-3);
+  background-color: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-sm);
+  color: var(--c-text);
+  font: inherit;
+  font-size: var(--fs-sm);
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.field input:hover,
+.field select:hover,
+.field textarea:hover {
+  border-color: #c3cddd;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: var(--c-primary);
+  box-shadow: 0 0 0 3px var(--c-primary-soft);
+  outline: none;
+}
+
+.filters-reset {
+  align-self: end;
+  justify-self: start;
+}
+
+/* ============ 9. CARTES (PROJETS & FORMATIONS) ============ */
+
+/* Grille responsive : 1 colonne en mobile, auto-fill ensuite */
+.card-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--sp-4);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background-color: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  animation: fade-in-up 400ms ease both;
+  transition: transform var(--transition), box-shadow var(--transition),
+              border-color var(--transition);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  border-color: #c7d3e8;
+  box-shadow: var(--shadow-md);
+}
+
+.card-media {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  background-color: #dde4ef;
+}
+
+.card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 400ms ease;
+}
+
+.card:hover .card-media img {
+  transform: scale(1.05);
+}
+
+.card-media .badge {
+  position: absolute;
+  top: var(--sp-3);
+  left: var(--sp-3);
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  gap: var(--sp-3);
+  padding: var(--sp-4);
+}
+
+.card-title {
+  margin: 0;
+  font-size: var(--fs-lg);
+}
+
+.card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2) var(--sp-4);
+  margin: 0;
+  color: var(--c-text-muted);
+  font-size: var(--fs-sm);
+}
+
+.card-client {
+  margin: 0;
+  color: var(--c-text-muted);
+  font-size: var(--fs-sm);
+}
+
+.card-client strong {
+  color: var(--c-text);
+}
+
+.card-price {
+  color: var(--c-navy);
+  font-size: var(--fs-lg);
+  font-weight: 700;
+}
+
+.card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  margin-top: auto;
+}
+
+.card-actions .btn {
+  flex: 1 1 140px;
+  padding: var(--sp-2) var(--sp-4);
+}
+
+/* --- Badges --- */
+.badge-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+}
+
+.badge {
+  display: inline-block;
+  padding: 2px var(--sp-3);
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  background-color: var(--c-primary-soft);
+  color: var(--c-primary-dark);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge-category {
+  background-color: var(--c-navy);
+  color: #ffffff;
+}
+
+.badge-level {
+  background-color: var(--c-accent-soft);
+  border-color: #f8c69a;
+  color: #9a4208;
+}
+
+.badge-available {
+  background-color: var(--c-success-soft);
+  border-color: #a8dec4;
+  color: #0b6e3f;
+}
+
+.badge-full {
+  background-color: var(--c-error-soft);
+  border-color: #f3b4b5;
+  color: #962225;
+}
+
+.rating {
+  color: var(--c-text-muted);
+  font-size: var(--fs-sm);
+}
+
+.rating-star {
+  color: var(--c-accent);
+}
+
+/* ============ 10. ETATS : LOADER, ERREURS, RESULTATS ============ */
+.loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-7) var(--sp-4);
+  color: var(--c-text-muted);
+}
+
+.loader[hidden] {
+  display: none;
+}
+
+.loader p {
+  margin: 0;
+  font-size: var(--fs-sm);
+}
+
+/* Loader CSS pur : anneau en rotation */
+.spinner {
+  display: block;
+  width: 44px;
+  height: 44px;
+  border: 4px solid var(--c-border);
+  border-top-color: var(--c-primary);
+  border-radius: 50%;
+  animation: spin 800ms linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.alert {
+  padding: var(--sp-4);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-size: var(--fs-sm);
+}
+
+.alert-error {
+  background-color: var(--c-error-soft);
+  border-color: #f3b4b5;
+  color: #8c1f22;
+}
+
+.alert-empty {
+  background-color: var(--c-surface);
+  border-color: var(--c-border);
+  color: var(--c-text-muted);
+  text-align: center;
+}
+
+.alert-success {
+  background-color: var(--c-success-soft);
+  border-color: #a8dec4;
+  color: #0b6e3f;
+}
+
+.results-count {
+  margin-bottom: var(--sp-4);
+  color: var(--c-text-muted);
+  font-size: var(--fs-sm);
+}
+
+/* ============ 11. FENETRES MODALES ============ */
+.modal {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0;
+}
+
+.modal[hidden] {
+  display: none;
+}
+
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(10, 20, 36, 0.62);
+  animation: fade-in 200ms ease both;
+}
+
+.modal-dialog {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-height: 92vh;
+  background-color: var(--c-surface);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  box-shadow: var(--shadow-lg);
+  animation: slide-up 280ms ease both;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  padding: var(--sp-4);
+  border-bottom: 1px solid var(--c-border);
+}
+
+.modal-title {
+  margin: 0;
+  font-size: var(--fs-lg);
+}
+
+.modal-close {
+  display: grid;
+  place-items: center;
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  background-color: var(--c-bg);
+  border: 1px solid var(--c-border);
+  border-radius: 50%;
+  color: var(--c-navy);
+  font-size: var(--fs-md);
+  transition: background-color var(--transition), color var(--transition),
+              transform var(--transition);
+}
+
+.modal-close:hover {
+  background-color: var(--c-error-soft);
+  border-color: #f3b4b5;
+  color: var(--c-error);
+  transform: rotate(90deg);
+}
+
+.modal-body {
+  padding: var(--sp-4);
+  overflow-y: auto;
+}
+
+.modal-media {
+  margin-bottom: var(--sp-4);
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  aspect-ratio: 16 / 9;
+}
+
+.modal-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.modal-body h3 {
+  margin-top: var(--sp-5);
+  font-size: var(--fs-md);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--c-text-muted);
+}
+
+/* Liste d'informations cle / valeur */
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--sp-3);
+  margin: 0 0 var(--sp-4);
+  padding: var(--sp-4);
+  background-color: var(--c-bg);
+  border-radius: var(--radius-md);
+}
+
+.info-grid dt {
+  color: var(--c-text-muted);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.info-grid dd {
+  margin: 0;
+  font-weight: 600;
+}
+
+/* Liste a puces personnalisee (fonctionnalites, modules) */
+.check-list li {
+  position: relative;
+  padding-left: var(--sp-5);
+  margin-bottom: var(--sp-2);
+  font-size: var(--fs-sm);
+}
+
+.check-list li::before {
+  content: "\2713";
+  position: absolute;
+  left: 0;
+  color: var(--c-success);
+  font-weight: 700;
+}
+
+.modal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+  margin-top: var(--sp-5);
+  padding-top: var(--sp-4);
+  border-top: 1px solid var(--c-border);
+}
+
+/* Empeche le defilement de la page lorsqu'une modale est ouverte */
+body.has-modal {
+  overflow: hidden;
+}
+
+/* ============ 12. POINTS DE RUPTURE (SECTIONS, GRILLES, MODALES) ============ */
+
+/* --- Breakpoint 1 : tablette & desktop (768 px et +) --- */
+@media (min-width: 768px) {
+  .section {
+    padding: var(--sp-8) 0;
+  }
+
+  .section-head h2 {
+    font-size: var(--fs-2xl);
+  }
+
+  .filters {
+    grid-template-columns: 2fr 1fr 1fr auto;
+    align-items: end;
+    padding: var(--sp-5);
+  }
+
+  .filters-4 {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  /* En tablette, la recherche occupe toute la largeur de la barre */
+  .filters-4 .field-search {
+    grid-column: 1 / -1;
+  }
+
+  .card-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--sp-5);
+  }
+
+  .modal {
+    align-items: center;
+    padding: var(--sp-5);
+  }
+
+  .modal-dialog {
+    max-width: 720px;
+    max-height: 88vh;
+    border-radius: var(--radius-lg);
+  }
+
+  .modal-head,
+  .modal-body {
+    padding: var(--sp-5);
+  }
+
+  .info-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* --- Breakpoint 2 : grands ecrans (1200 px et +) --- */
+@media (min-width: 1200px) {
+  .filters-4 {
+    grid-template-columns: 2fr 1fr 1fr 1fr auto;
+  }
+
+  .filters-4 .field-search {
+    grid-column: auto;
+  }
+
+  .card-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .info-grid {
+    grid-template-columns: repeat(3, 1fr);
   }
 }

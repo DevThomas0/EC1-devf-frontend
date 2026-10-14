@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Inscrivez-vous a une formation technique WebCraft Solutions : formulaire d'inscription en ligne.">
+  <title>Inscription &mdash; WebCraft Solutions</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <a class="skip-link" href="#inscription">Aller au formulaire</a>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="index.html">
+        <span class="logo-mark" aria-hidden="true">W</span>
+        <span class="logo-text">WebCraft <strong>Solutions</strong></span>
+      </a>
+
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" aria-label="Ouvrir le menu de navigation">
+        <span class="nav-toggle-bar" aria-hidden="true"></span>
+        <span class="nav-toggle-bar" aria-hidden="true"></span>
+        <span class="nav-toggle-bar" aria-hidden="true"></span>
+      </button>
+
+      <nav class="main-nav" id="main-nav" aria-label="Navigation principale">
+        <ul class="nav-list">
+          <li><a class="nav-link" href="index.html#accueil">Accueil</a></li>
+          <li><a class="nav-link" href="index.html#projets">Projets</a></li>
+          <li><a class="nav-link" href="index.html#formations">Formations</a></li>
+          <li><a class="nav-link nav-link-cta is-active" href="inscription.html" aria-current="page">Inscription</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <section class="page-hero">
+      <div class="container">
+        <p class="hero-eyebrow">Plateforme interne</p>
+        <h1 class="hero-title">Inscription &agrave; une formation</h1>
+        <p class="hero-subtitle">
+          Remplissez le formulaire ci-dessous : notre &eacute;quipe p&eacute;dagogique
+          vous recontacte sous 48 heures ouvr&eacute;es.
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="inscription">
+      <div class="container form-layout">
+
+        <form class="form-card" id="signup-form" novalidate>
+          <p class="form-intro">
+            Les champs marqu&eacute;s d'un ast&eacute;risque
+            (<span class="required-mark" aria-hidden="true">*</span>) sont obligatoires.
+          </p>
+
+          <p class="alert alert-error" id="form-global-error" role="alert" hidden></p>
+
+          <fieldset class="form-fieldset">
+            <legend>Vos coordonn&eacute;es</legend>
+
+            <div class="form-row">
+              <div class="field">
+                <label for="firstname">
+                  Pr&eacute;nom <span class="required-mark" aria-hidden="true">*</span>
+                </label>
+                <input type="text" id="firstname" name="firstname"
+                       autocomplete="given-name" aria-describedby="firstname-error" required>
+                <p class="field-error" id="firstname-error" role="alert" hidden></p>
+              </div>
+
+              <div class="field">
+                <label for="lastname">
+                  Nom <span class="required-mark" aria-hidden="true">*</span>
+                </label>
+                <input type="text" id="lastname" name="lastname"
+                       autocomplete="family-name" aria-describedby="lastname-error" required>
+                <p class="field-error" id="lastname-error" role="alert" hidden></p>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="field">
+                <label for="email">
+                  Adresse e-mail <span class="required-mark" aria-hidden="true">*</span>
+                </label>
+                <input type="email" id="email" name="email" placeholder="prenom.nom@exemple.fr"
+                       autocomplete="email" aria-describedby="email-error" required>
+                <p class="field-error" id="email-error" role="alert" hidden></p>
+              </div>
+
+              <div class="field">
+                <label for="phone">
+                  T&eacute;l&eacute;phone <span class="required-mark" aria-hidden="true">*</span>
+                </label>
+                <input type="tel" id="phone" name="phone" placeholder="+33 6 12 34 56 78"
+                       autocomplete="tel" aria-describedby="phone-hint phone-error" required>
+                <p class="field-hint" id="phone-hint">Format international, indicatif compris.</p>
+                <p class="field-error" id="phone-error" role="alert" hidden></p>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset class="form-fieldset">
+            <legend>Votre formation</legend>
+
+            <div class="form-row">
+              <div class="field">
+                <label for="course">
+                  Formation souhait&eacute;e <span class="required-mark" aria-hidden="true">*</span>
+                </label>
+                <select id="course" name="course" aria-describedby="course-error" required>
+                  <option value="">Chargement des formations&hellip;</option>
+                </select>
+                <p class="field-error" id="course-error" role="alert" hidden></p>
+              </div>
+
+              <div class="field">
+                <label for="level">
+                  Votre niveau <span class="required-mark" aria-hidden="true">*</span>
+                </label>
+                <select id="level" name="level" aria-describedby="level-error" required>
+                  <option value="">S&eacute;lectionnez un niveau</option>
+                  <option value="D&eacute;butant">D&eacute;butant</option>
+                  <option value="Interm&eacute;diaire">Interm&eacute;diaire</option>
+                  <option value="Avanc&eacute;">Avanc&eacute;</option>
+                </select>
+                <p class="field-error" id="level-error" role="alert" hidden></p>
+              </div>
+            </div>
+
+            <p class="alert alert-error" id="course-load-error" role="alert" hidden></p>
+
+            <div class="field">
+              <label for="motivation">
+                Votre motivation <span class="required-mark" aria-hidden="true">*</span>
+              </label>
+              <textarea id="motivation" name="motivation" rows="5"
+                        placeholder="Expliquez en quelques lignes votre projet et vos attentes&hellip;"
+                        aria-describedby="motivation-counter motivation-error" required></textarea>
+              <p class="field-hint" id="motivation-counter">0 / 50 caract&egrave;res minimum</p>
+              <p class="field-error" id="motivation-error" role="alert" hidden></p>
+            </div>
+          </fieldset>
+
+          <fieldset class="form-fieldset">
+            <legend>Informations compl&eacute;mentaires <span class="legend-note">(facultatif)</span></legend>
+
+            <div class="form-row">
+              <div class="field">
+                <label for="company">Entreprise</label>
+                <input type="text" id="company" name="company"
+                       autocomplete="organization" placeholder="Nom de votre entreprise">
+              </div>
+
+              <div class="field">
+                <label for="experience">Exp&eacute;rience (en ann&eacute;es)</label>
+                <input type="number" id="experience" name="experience"
+                       min="0" max="50" step="1" placeholder="0" aria-describedby="experience-error">
+                <p class="field-error" id="experience-error" role="alert" hidden></p>
+              </div>
+            </div>
+          </fieldset>
+
+          <div class="form-actions">
+            <button class="btn btn-primary" type="submit">Envoyer mon inscription</button>
+            <button class="btn btn-ghost" type="reset">Effacer le formulaire</button>
+          </div>
+        </form>
+
+        <aside class="summary-card" aria-labelledby="summary-title">
+          <h2 class="summary-title" id="summary-title">R&eacute;capitulatif</h2>
+          <div id="summary-content">
+            <p class="muted">S&eacute;lectionnez une formation pour afficher son d&eacute;tail.</p>
+          </div>
+          <p class="summary-note">
+            Besoin d'un conseil ? &Eacute;crivez-nous &agrave;
+            <a href="mailto:formations@webcraft-solutions.example">formations@webcraft-solutions.example</a>.
+          </p>
+        </aside>
+
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <span class="logo-mark" aria-hidden="true">W</span>
+        <p>WebCraft Solutions<br><span class="muted">Portfolio clients &amp; formations techniques</span></p>
+      </div>
+
+      <nav class="footer-nav" aria-label="Navigation du pied de page">
+        <ul>
+          <li><a href="index.html#projets">Projets</a></li>
+          <li><a href="index.html#formations">Formations</a></li>
+          <li><a href="inscription.html">Inscription</a></li>
+        </ul>
+      </nav>
+
+      <ul class="social-list">
+        <li><a href="https://github.com" aria-label="WebCraft Solutions sur GitHub">GitHub</a></li>
+        <li><a href="https://www.linkedin.com" aria-label="WebCraft Solutions sur LinkedIn">LinkedIn</a></li>
+        <li><a href="https://x.com" aria-label="WebCraft Solutions sur X">X</a></li>
+      </ul>
+    </div>
+    <p class="copyright">&copy; 2026 WebCraft Solutions. Tous droits r&eacute;serv&eacute;s.</p>
+  </footer>
+
+  <div class="modal" id="success-modal" hidden>
+    <div class="modal-overlay" data-close-modal></div>
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="success-modal-title">
+      <div class="modal-head">
+        <h2 class="modal-title" id="success-modal-title">Inscription enregistr&eacute;e</h2>
+        <button class="modal-close" type="button" data-close-modal aria-label="Fermer la fen&ecirc;tre de confirmation">
+          <span aria-hidden="true">&#10005;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="success-icon" aria-hidden="true">&#10003;</p>
+        <p id="success-message">Votre demande a bien &eacute;t&eacute; prise en compte.</p>
+        <p class="muted">
+          Un e-mail de confirmation vous sera envoy&eacute;. Notre &eacute;quipe
+          vous recontacte sous 48 heures ouvr&eacute;es.
+        </p>
+        <div class="modal-actions">
+          <a class="btn btn-ghost" href="index.html#formations">Voir d'autres formations</a>
+          <button class="btn btn-primary" type="button" data-close-modal>Fermer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
