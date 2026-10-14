@@ -16,6 +16,8 @@ const escapeHtml = (value) =>
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
 
+const safeUrl = (url) => (/^https?:\/\//i.test(url) ? url : "#");
+
 const show = (element, visible) => {
   element.hidden = !visible;
 };
@@ -126,7 +128,7 @@ const projectDetails = (project) => `
   <h3>Fonctionnalités</h3>
   ${listOf(project.features, "list")}
   <p class="modal-actions">
-    <a class="btn btn-primary" href="${escapeHtml(project.url)}" target="_blank" rel="noopener">Visiter le site</a>
+    <a class="btn btn-primary" href="${escapeHtml(safeUrl(project.url))}" target="_blank" rel="noopener">Visiter le site</a>
   </p>
 `;
 
