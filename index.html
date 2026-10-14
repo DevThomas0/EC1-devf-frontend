@@ -9,10 +9,8 @@
 </head>
 <body>
 
-  <!-- Lien d'evitement : premier element focusable pour la navigation clavier -->
   <a class="skip-link" href="#projets">Aller au contenu principal</a>
 
-  <!-- ============ EN-TETE ============ -->
   <header class="site-header">
     <div class="container header-inner">
       <a class="logo" href="index.html">
@@ -39,7 +37,6 @@
 
   <main>
 
-    <!-- ============ HERO ============ -->
     <section class="hero" id="accueil">
       <div class="container hero-inner">
         <p class="hero-eyebrow">Agence web &amp; centre de formation</p>
@@ -55,7 +52,6 @@
       </div>
     </section>
 
-    <!-- ============ SECTION PROJETS (API 1) ============ -->
     <section class="section" id="projets">
       <div class="container">
         <div class="section-head">
@@ -67,7 +63,6 @@
           </p>
         </div>
 
-        <!-- Filtres : recherche temps reel + 2 listes deroulantes combinables -->
         <form class="filters" id="project-filters" role="search" aria-label="Filtrer les projets">
           <div class="field field-search">
             <label for="project-search">Rechercher un projet</label>
@@ -92,29 +87,23 @@
           <button class="btn btn-ghost filters-reset" type="reset" id="project-reset">R&eacute;initialiser</button>
         </form>
 
-        <!-- Etat : chargement -->
         <div class="loader" id="project-loader">
           <span class="spinner" aria-hidden="true"></span>
           <p>Chargement des projets&hellip;</p>
         </div>
 
-        <!-- Etat : erreur de chargement de l'API -->
         <p class="alert alert-error" id="project-error" role="alert" hidden></p>
 
-        <!-- Compteur de resultats annonce aux lecteurs d'ecran -->
         <p class="results-count" id="project-count" role="status" hidden></p>
 
-        <!-- Grille responsive des cartes projet -->
         <div class="card-grid" id="project-grid"></div>
 
-        <!-- Etat : aucun resultat apres filtrage -->
         <p class="alert alert-empty" id="project-empty" hidden>
           Aucun projet ne correspond &agrave; votre recherche.
         </p>
       </div>
     </section>
 
-    <!-- ============ SECTION FORMATIONS (API 2) ============ -->
     <section class="section section-alt" id="formations">
       <div class="container">
         <div class="section-head">
@@ -126,7 +115,6 @@
           </p>
         </div>
 
-        <!-- Filtres : recherche temps reel + 3 listes deroulantes combinables -->
         <form class="filters filters-4" id="course-filters" role="search" aria-label="Filtrer les formations">
           <div class="field field-search">
             <label for="course-search">Rechercher une formation</label>
@@ -177,7 +165,6 @@
 
   </main>
 
-  <!-- ============ PIED DE PAGE ============ -->
   <footer class="site-footer">
     <div class="container footer-inner">
       <div class="footer-brand">
@@ -202,7 +189,6 @@
     <p class="copyright">&copy; 2026 WebCraft Solutions. Tous droits r&eacute;serv&eacute;s.</p>
   </footer>
 
-  <!-- ============ MODAL PROJET ============ -->
   <div class="modal" id="project-modal" hidden>
     <div class="modal-overlay" data-close-modal></div>
     <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="project-modal-title">
@@ -216,7 +202,6 @@
     </div>
   </div>
 
-  <!-- ============ MODAL FORMATION ============ -->
   <div class="modal" id="course-modal" hidden>
     <div class="modal-overlay" data-close-modal></div>
     <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="course-modal-title">
