@@ -3,7 +3,9 @@
 const API_URL = "https://webcraft-api.vercel.app/data/";
 const MOTIVATION_MIN_LENGTH = 50;
 
+// Stockage global des données
 const store = { projects: [], courses: [] };
+// let debugMode = false;
 
 
 /* ---------- Utilitaires ---------- */
@@ -69,12 +71,16 @@ const loadData = async ({ file, label, loader, errorBox, onSuccess }) => {
   show(errorBox, false);
 
   try {
+    // console.log("Chargement des données depuis :", API_URL + file);
     const response = await fetch(API_URL + file);
 
     if (!response.ok) throw new Error(`réponse HTTP ${response.status}`);
 
-    onSuccess(await response.json());
+    const data = await response.json();
+    console.log(`Données reçues pour ${file} :`, data);
+    onSuccess(data);
   } catch (error) {
+    console.error(`Erreur de chargement (${file}) :`, error);
     errorBox.textContent = `Impossible de charger ${label}. Vérifiez votre connexion puis rechargez la page (${error.message}).`;
     show(errorBox, true);
   } finally {
@@ -100,6 +106,7 @@ const openModal = (modal) => {
   setBackgroundInert(true);
   document.body.classList.add("has-modal");
   $(".modal-close", modal).focus();
+  // console.log("Modale ouverte :", modal.id);
 };
 
 const closeModal = (modal) => {
@@ -129,7 +136,7 @@ const initNavigation = () => {
 
   toggle.addEventListener("click", () => {
     const isOpen = nav.classList.toggle("is-open");
-
+    // console.log("Menu mobile toggle :", isOpen);
     toggle.setAttribute("aria-expanded", String(isOpen));
   });
 
@@ -280,7 +287,7 @@ const courseOption = (course) => {
 
 /* ---------- Catalogues (projets et formations) ---------- */
 
-// selects : nom du filtre -> [champ de l'élément filtré, liste d'options dans la réponse de l'API]
+// Configuration des filtres et correspondances avec les champs de l'API
 const CATALOGS = [
   {
     prefix: "project",
@@ -341,6 +348,7 @@ const initCatalog = ({ prefix, label, noun, searchFields, selects, card, details
     const query = search.value.trim().toLowerCase();
     const items = store[key].filter((item) => matchesSearch(item, query) && matchesFilters(item));
 
+    // console.log(`Rendu ${prefix} : ${items.length} élément(s)`);
     grid.innerHTML = items.map(card).join("");
     show(empty, items.length === 0);
     show(count, true);
@@ -350,8 +358,13 @@ const initCatalog = ({ prefix, label, noun, searchFields, selects, card, details
   search.addEventListener("input", debounce(render));
   filters.forEach(({ select }) => select.addEventListener("change", render));
 
-  // "reset" est émis avant la remise à zéro des champs : on attend avant de re-filtrer
-  $(`#${prefix}-filters`).addEventListener("reset", () => setTimeout(render));
+  // Petit délai pour laisser le reset vider les inputs avant de relancer l'affichage
+  $(`#${prefix}-filters`).addEventListener("reset", () => {
+    // console.log(`Reset des filtres pour ${prefix}`);
+    setTimeout(render, 10);
+  });
+
+  // TODO: ajouter une pagination ou lazy loading si la liste devient trop longue
 
   grid.addEventListener("click", (event) => {
     const button = event.target.closest("[data-id]");
@@ -359,6 +372,7 @@ const initCatalog = ({ prefix, label, noun, searchFields, selects, card, details
     if (!button) return;
 
     const item = store[key].find((entry) => String(entry.id) === button.dataset.id);
+    console.log(`Détails demandés (${prefix}) :`, item?.title);
 
     $(`#${prefix}-modal-title`).textContent = item.title;
     $(`#${prefix}-modal-body`).innerHTML = details(item);
@@ -398,13 +412,18 @@ const VALIDATORS = {
       ? ""
       : "Adresse e-mail invalide (exemple : prenom.nom@exemple.fr).",
 
-  // format international : "+" suivi de 8 à 15 chiffres, séparateurs ignorés
+  // Format international requis (ex: +33 6 12 34 56 78)
   phone: (value) =>
     /^\+[0-9]{8,15}$/.test(value.replace(/[\s.-]/g, ""))
       ? ""
       : "Numéro au format international attendu (exemple : +33 6 12 34 56 78).",
 
-  course: (value) => (value ? "" : "Choisissez une formation."),
+  course: (value) => {
+    if (!value) return "Choisissez une formation.";
+    const found = store.courses.find((item) => String(item.id) === value);
+    if (found && !found.available) return "Cette formation est complète.";
+    return "";
+  },
 
   level: (value) => (value ? "" : "Indiquez votre niveau."),
 
@@ -450,6 +469,7 @@ const initSignupForm = () => {
   };
 
   const resetStates = () => {
+    // console.log("Réinitialisation visuelle du formulaire");
     fields.forEach((field) => {
       field.classList.remove("is-valid", "is-invalid");
       show($(`#${field.id}-error`), false);
@@ -466,8 +486,8 @@ const initSignupForm = () => {
 
   motivation.addEventListener("input", updateCounter);
 
-  // même contrainte que pour les filtres : l'état visuel doit être réinitialisé après le reset natif
-  form.addEventListener("reset", () => setTimeout(resetStates));
+  // Réinitialisation des classes d'erreur après le reset du formulaire
+  form.addEventListener("reset", () => setTimeout(resetStates, 10));
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -475,6 +495,7 @@ const initSignupForm = () => {
     const invalidFields = fields.filter((field) => !validate(field));
 
     if (invalidFields.length) {
+      console.warn("Validation échouée, champs en erreur :", invalidFields.map((f) => f.name));
       globalError.textContent = `Le formulaire comporte ${plural(invalidFields.length, "champ")} à corriger.`;
       show(globalError, true);
       invalidFields[0].focus();
@@ -483,6 +504,12 @@ const initSignupForm = () => {
 
     const firstname = form.elements.firstname.value.trim();
     const course = store.courses.find((item) => String(item.id) === courseSelect.value);
+
+    console.log("Inscription soumise avec succès :", {
+      nom: form.elements.lastname.value,
+      prenom: firstname,
+      formation: course?.title,
+    });
 
     $("#success-message").textContent = `Merci ${firstname}, votre inscription à la formation « ${course.title} » est enregistrée.`;
     openModal($("#success-modal"));
@@ -507,7 +534,10 @@ const initSignupForm = () => {
       const requestedId = new URLSearchParams(location.search).get("formation");
       const requestedCourse = courses.find((course) => String(course.id) === requestedId);
 
-      if (requestedCourse?.available) courseSelect.value = requestedId;
+      // console.log("Formation demandée par URL :", requestedId);
+      if (requestedCourse?.available) {
+        courseSelect.value = requestedId;
+      }
     },
   });
 };
@@ -516,8 +546,10 @@ const initSignupForm = () => {
 /* ---------- Démarrage ---------- */
 
 document.addEventListener("DOMContentLoaded", () => {
+  console.log("Initialisation du portail WebCraft Solutions...");
   initNavigation();
   initModals();
   CATALOGS.forEach(initCatalog);
   initSignupForm();
+  // TODO: vérifier compatibilité avec les anciens navigateurs
 });
