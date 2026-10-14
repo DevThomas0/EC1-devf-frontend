@@ -1,14 +1,14 @@
 :root {
-  --blanc: #ffffff;
+  --white: #ffffff;
   --beige: #f4efe6;
-  --beige-fonce: #e5dccb;
-  --marron: #6b4f3a;
-  --marron-fonce: #4a3526;
-  --noir: #1f1b16;
-  --gris: #6e6a63;
-  --bordure: #c9bfae;
-  --erreur: #8c3a2b;
-  --espace: 1rem;
+  --beige-dark: #e5dccb;
+  --brown: #6b4f3a;
+  --brown-dark: #4a3526;
+  --black: #1f1b16;
+  --gray: #6e6a63;
+  --border: #c9bfae;
+  --error: #8c3a2b;
+  --space: 1rem;
 }
 
 * {
@@ -24,7 +24,7 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   font-size: 1rem;
   line-height: 1.6;
-  color: var(--noir);
+  color: var(--black);
   background-color: var(--beige);
 }
 
@@ -48,7 +48,7 @@ h3 {
 }
 
 p {
-  margin: 0 0 var(--espace);
+  margin: 0 0 var(--space);
 }
 
 ul {
@@ -64,26 +64,26 @@ img {
 }
 
 a {
-  color: var(--marron);
+  color: var(--brown);
 }
 
 a:hover {
-  color: var(--marron-fonce);
+  color: var(--brown-dark);
 }
 
 :focus-visible {
-  outline: 2px solid var(--marron);
+  outline: 2px solid var(--brown);
   outline-offset: 2px;
 }
 
 .container {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 0 var(--espace);
+  padding: 0 var(--space);
 }
 
 .muted {
-  color: var(--gris);
+  color: var(--gray);
 }
 
 .sr-only {
@@ -99,21 +99,23 @@ a:hover {
   top: -3rem;
   left: 0;
   padding: 0.5rem 1rem;
-  background-color: var(--noir);
-  color: var(--blanc);
+  background-color: var(--black);
+  color: var(--white);
 }
 
 .skip-link:focus {
   top: 0;
-  color: var(--blanc);
+  color: var(--white);
 }
 
-.btn {
+.btn,
+.nav-toggle,
+.modal-close {
   display: inline-block;
   padding: 0.6rem 1.2rem;
-  border: 1px solid var(--noir);
-  background-color: var(--blanc);
-  color: var(--noir);
+  border: 1px solid var(--black);
+  background-color: var(--white);
+  color: var(--black);
   font-family: inherit;
   font-size: 0.9rem;
   text-decoration: none;
@@ -121,26 +123,26 @@ a:hover {
   transition: background-color 0.2s, color 0.2s;
 }
 
-.btn:hover {
-  background-color: var(--noir);
-  color: var(--blanc);
+.btn:hover,
+.modal-close:hover {
+  background-color: var(--black);
+  color: var(--white);
 }
 
 .btn-primary {
-  background-color: var(--marron);
-  border-color: var(--marron);
-  color: var(--blanc);
+  background-color: var(--brown);
+  border-color: var(--brown);
+  color: var(--white);
 }
 
 .btn-primary:hover {
-  background-color: var(--marron-fonce);
-  border-color: var(--marron-fonce);
-  color: var(--blanc);
+  background-color: var(--brown-dark);
+  border-color: var(--brown-dark);
 }
 
 .site-header {
-  background-color: var(--blanc);
-  border-bottom: 1px solid var(--noir);
+  background-color: var(--white);
+  border-bottom: 1px solid var(--black);
 }
 
 .header-inner {
@@ -152,22 +154,18 @@ a:hover {
 }
 
 .logo {
-  color: var(--noir);
+  color: var(--black);
   font-size: 1.1rem;
   text-decoration: none;
 }
 
 .logo strong {
-  color: var(--marron);
+  color: var(--brown);
 }
 
-.nav-toggle {
+.nav-toggle,
+.modal-close {
   padding: 0.4rem 0.8rem;
-  border: 1px solid var(--noir);
-  background-color: var(--blanc);
-  color: var(--noir);
-  font-family: inherit;
-  cursor: pointer;
 }
 
 .main-nav {
@@ -183,20 +181,20 @@ a:hover {
 .main-nav a {
   display: block;
   padding: 0.5rem 0;
-  border-top: 1px solid var(--bordure);
-  color: var(--noir);
+  border-top: 1px solid var(--border);
+  color: var(--black);
   text-decoration: none;
 }
 
 .main-nav a:hover {
-  color: var(--marron);
+  color: var(--brown);
 }
 
 .hero {
   padding: 2.5rem 0;
-  background-color: var(--noir);
-  color: var(--blanc);
-  animation: apparition 0.6s ease;
+  background-color: var(--black);
+  color: var(--white);
+  animation: fade-in 0.6s ease;
 }
 
 .hero h1 {
@@ -205,17 +203,24 @@ a:hover {
 
 .hero p {
   max-width: 60ch;
-  color: var(--beige-fonce);
+  color: var(--beige-dark);
 }
 
-.hero-actions {
+.hero-actions,
+.card-actions,
+.modal-actions,
+.form-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
+}
+
+.hero-actions,
+.form-actions {
   margin-bottom: 0;
 }
 
-@keyframes apparition {
+@keyframes fade-in {
   from {
     opacity: 0;
     transform: translateY(15px);
@@ -227,7 +232,7 @@ a:hover {
   }
 }
 
-@keyframes rotation {
+@keyframes spin {
   to {
     transform: rotate(360deg);
   }
@@ -238,20 +243,20 @@ a:hover {
 }
 
 .section-alt {
-  background-color: var(--beige-fonce);
+  background-color: var(--beige-dark);
 }
 
 .section-intro {
-  color: var(--gris);
+  color: var(--gray);
 }
 
 .filters {
   display: grid;
   gap: 0.75rem;
-  margin-bottom: var(--espace);
-  padding: var(--espace);
-  background-color: var(--blanc);
-  border: 1px solid var(--bordure);
+  margin-bottom: var(--space);
+  padding: var(--space);
+  background-color: var(--white);
+  border: 1px solid var(--border);
 }
 
 .field {
@@ -275,9 +280,9 @@ a:hover {
 .field textarea {
   width: 100%;
   padding: 0.5rem;
-  border: 1px solid var(--bordure);
-  background-color: var(--blanc);
-  color: var(--noir);
+  border: 1px solid var(--border);
+  background-color: var(--white);
+  color: var(--black);
   font-family: inherit;
   font-size: 0.9rem;
 }
@@ -285,7 +290,7 @@ a:hover {
 .field input:focus,
 .field select:focus,
 .field textarea:focus {
-  border-color: var(--marron);
+  border-color: var(--brown);
 }
 
 .field textarea {
@@ -299,25 +304,25 @@ a:hover {
 
 .grid {
   display: grid;
-  gap: var(--espace);
+  gap: var(--space);
 }
 
 .card {
   display: flex;
   flex-direction: column;
-  background-color: var(--blanc);
-  border: 1px solid var(--bordure);
+  background-color: var(--white);
+  border: 1px solid var(--border);
   transition: border-color 0.2s;
 }
 
 .card:hover {
-  border-color: var(--noir);
+  border-color: var(--black);
 }
 
 .card img {
   aspect-ratio: 16 / 9;
   object-fit: cover;
-  border-bottom: 1px solid var(--bordure);
+  border-bottom: 1px solid var(--border);
 }
 
 .card-body {
@@ -325,7 +330,7 @@ a:hover {
   flex-direction: column;
   flex: 1;
   gap: 0.5rem;
-  padding: var(--espace);
+  padding: var(--space);
 }
 
 .card-body p {
@@ -334,7 +339,7 @@ a:hover {
 }
 
 .card-meta {
-  color: var(--gris);
+  color: var(--gray);
 }
 
 .card-price {
@@ -343,9 +348,6 @@ a:hover {
 }
 
 .card-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
   margin-top: auto;
   padding-top: 0.5rem;
 }
@@ -358,48 +360,51 @@ a:hover {
 
 .badge {
   padding: 0.1rem 0.5rem;
-  border: 1px solid var(--bordure);
+  border: 1px solid var(--border);
   background-color: var(--beige);
   font-size: 0.75rem;
 }
 
-.badge-fort {
-  background-color: var(--marron);
-  border-color: var(--marron);
-  color: var(--blanc);
+.badge-strong,
+.badge-full {
+  color: var(--white);
 }
 
-.badge-complet {
-  background-color: var(--gris);
-  border-color: var(--gris);
-  color: var(--blanc);
+.badge-strong {
+  background-color: var(--brown);
+  border-color: var(--brown);
+}
+
+.badge-full {
+  background-color: var(--gray);
+  border-color: var(--gray);
 }
 
 .loader {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: var(--gris);
+  color: var(--gray);
 }
 
 .spinner {
   width: 18px;
   height: 18px;
-  border: 3px solid var(--bordure);
-  border-top-color: var(--marron);
-  animation: rotation 0.8s linear infinite;
+  border: 3px solid var(--border);
+  border-top-color: var(--brown);
+  animation: spin 0.8s linear infinite;
 }
 
 .alert {
   padding: 0.75rem;
-  border: 1px solid var(--erreur);
-  background-color: var(--blanc);
-  color: var(--erreur);
+  border: 1px solid var(--error);
+  background-color: var(--white);
+  color: var(--error);
   font-size: 0.9rem;
 }
 
 .results {
-  color: var(--gris);
+  color: var(--gray);
   font-size: 0.85rem;
 }
 
@@ -410,7 +415,7 @@ a:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--espace);
+  padding: var(--space);
 }
 
 .modal-overlay {
@@ -426,8 +431,8 @@ a:hover {
   width: 100%;
   max-width: 640px;
   max-height: 90vh;
-  background-color: var(--blanc);
-  border: 1px solid var(--noir);
+  background-color: var(--white);
+  border: 1px solid var(--black);
 }
 
 .modal-head {
@@ -435,73 +440,56 @@ a:hover {
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
-  padding: var(--espace);
-  border-bottom: 1px solid var(--bordure);
+  padding: var(--space);
+  border-bottom: 1px solid var(--border);
 }
 
 .modal-head h2 {
   margin: 0;
 }
 
-.modal-close {
-  padding: 0.3rem 0.6rem;
-  border: 1px solid var(--noir);
-  background-color: var(--blanc);
-  color: var(--noir);
-  font-family: inherit;
-  cursor: pointer;
-}
-
-.modal-close:hover {
-  background-color: var(--noir);
-  color: var(--blanc);
-}
-
 .modal-body {
-  padding: var(--espace);
+  padding: var(--space);
   overflow-y: auto;
 }
 
 .modal-body h3 {
-  margin-top: var(--espace);
+  margin-top: var(--space);
 }
 
 .modal-body img {
   aspect-ratio: 16 / 9;
   object-fit: cover;
-  margin-bottom: var(--espace);
+  margin-bottom: var(--space);
 }
 
-.infos {
+.info {
   display: grid;
   gap: 0.5rem;
-  margin: 0 0 var(--espace);
+  margin: 0 0 var(--space);
   padding: 0.75rem;
   background-color: var(--beige);
 }
 
-.infos dt {
-  color: var(--gris);
+.info dt {
+  color: var(--gray);
   font-size: 0.8rem;
 }
 
-.infos dd {
+.info dd {
   margin: 0;
   font-weight: bold;
 }
 
-.liste li {
+.list li {
   margin-bottom: 0.25rem;
   padding-left: 0.75rem;
-  border-left: 2px solid var(--marron);
+  border-left: 2px solid var(--brown);
   font-size: 0.9rem;
 }
 
 .modal-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin: var(--espace) 0 0;
+  margin: var(--space) 0 0;
 }
 
 body.has-modal {
@@ -510,20 +498,20 @@ body.has-modal {
 
 .form {
   max-width: 700px;
-  padding: var(--espace);
-  background-color: var(--blanc);
-  border: 1px solid var(--bordure);
+  padding: var(--space);
+  background-color: var(--white);
+  border: 1px solid var(--border);
 }
 
 .form-intro {
-  color: var(--gris);
+  color: var(--gray);
   font-size: 0.9rem;
 }
 
 .form fieldset {
-  margin: 0 0 var(--espace);
-  padding: var(--espace);
-  border: 1px solid var(--bordure);
+  margin: 0 0 var(--space);
+  padding: var(--space);
+  border: 1px solid var(--border);
 }
 
 .form legend {
@@ -536,34 +524,31 @@ body.has-modal {
 }
 
 .field-hint {
-  color: var(--gris);
+  color: var(--gray);
 }
 
 .field-error {
   margin-top: 0.25rem;
-  color: var(--erreur);
+  color: var(--error);
   font-weight: bold;
 }
 
-.is-invalid {
-  border-color: var(--erreur);
+.field .is-invalid {
+  border-color: var(--error);
 }
 
-.is-valid {
-  border-color: var(--marron);
+.field .is-invalid:focus {
+  outline-color: var(--error);
 }
 
-.form-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin: 0;
+.field .is-valid {
+  border-color: var(--brown);
 }
 
 .site-footer {
-  padding: var(--espace) 0;
-  background-color: var(--noir);
-  color: var(--beige-fonce);
+  padding: var(--space) 0;
+  background-color: var(--black);
+  color: var(--beige-dark);
 }
 
 .footer-inner {
@@ -579,16 +564,16 @@ body.has-modal {
 }
 
 .site-footer a {
-  color: var(--beige-fonce);
+  color: var(--beige-dark);
 }
 
 .site-footer a:hover {
-  color: var(--blanc);
+  color: var(--white);
 }
 
 .social {
   display: flex;
-  gap: var(--espace);
+  gap: var(--space);
 }
 
 @media (min-width: 768px) {
@@ -612,7 +597,7 @@ body.has-modal {
 
   .main-nav ul {
     display: flex;
-    gap: var(--espace);
+    gap: var(--space);
   }
 
   .main-nav a {
@@ -637,12 +622,12 @@ body.has-modal {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .infos {
+  .info {
     grid-template-columns: repeat(2, 1fr);
   }
 
   .form .field {
-    margin-bottom: var(--espace);
+    margin-bottom: var(--space);
   }
 }
 
