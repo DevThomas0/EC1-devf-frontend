@@ -8,50 +8,35 @@ const API = {
 const store = { projects: [], courses: [] };
 
 const $ = (selector, scope = document) => scope.querySelector(selector);
-const $$ = (selector, scope = document) => [...scope.querySelectorAll(selector)];
+const $$ = (selector) => [...document.querySelectorAll(selector)];
 
-const escapeHtml = (value) =>
+const clean = (value) =>
   String(value ?? "")
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
+    .replace(/"/g, "&quot;");
 
-const normalize = (value) =>
-  String(value ?? "")
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "");
+const show = (element, visible) => {
+  element.hidden = !visible;
+};
 
 const debounce = (callback, delay = 250) => {
   let timer = null;
-  return (...args) => {
+  return () => {
     clearTimeout(timer);
-    timer = setTimeout(() => callback(...args), delay);
+    timer = setTimeout(callback, delay);
   };
 };
 
-const show = (element, visible) => {
-  if (element) element.hidden = !visible;
-};
+const badges = (items) =>
+  items.map((item) => `<li class="badge">${clean(item)}</li>`).join("");
 
-const badgeList = (items = []) =>
-  items.map((item) => `<li class="badge">${escapeHtml(item)}</li>`).join("");
-
-const fillSelect = (select, values = []) =>
-  select.insertAdjacentHTML(
-    "beforeend",
-    values.map((value) => `<option>${escapeHtml(value)}</option>`).join(""),
-  );
-
-const availabilityBadge = (course) =>
-  `<li class="badge ${course.available ? "badge-available" : "badge-full"}">${
-    course.available ? "Disponible" : "Complet"
-  }</li>`;
+const options = (values) =>
+  values.map((value) => `<option>${clean(value)}</option>`).join("");
 
 const loadData = async ({ url, label, loader, errorBox, onSuccess }) => {
-  show(loader, true);
+  if (loader) show(loader, true);
   show(errorBox, false);
 
   try {
@@ -62,49 +47,30 @@ const loadData = async ({ url, label, loader, errorBox, onSuccess }) => {
     errorBox.textContent = `Impossible de charger ${label}. Vérifiez votre connexion puis rechargez la page (${error.message}).`;
     show(errorBox, true);
   } finally {
-    show(loader, false);
+    if (loader) show(loader, false);
   }
 };
 
-const FOCUSABLE =
-  'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])';
 let lastFocused = null;
 
 const openModal = (modal) => {
   lastFocused = document.activeElement;
   show(modal, true);
   document.body.classList.add("has-modal");
-  $(FOCUSABLE, modal)?.focus();
+  $(".modal-close", modal).focus();
 };
 
 const closeModal = (modal) => {
   if (modal.hidden) return;
   show(modal, false);
   document.body.classList.remove("has-modal");
-  lastFocused?.focus();
-  lastFocused = null;
+  if (lastFocused) lastFocused.focus();
 };
 
 const initModals = () => {
   $$(".modal").forEach((modal) => {
     modal.addEventListener("click", (event) => {
       if (event.target.closest("[data-close-modal]")) closeModal(modal);
-    });
-
-    modal.addEventListener("keydown", (event) => {
-      if (event.key !== "Tab") return;
-
-      const focusables = $$(FOCUSABLE, modal).filter((el) => el.offsetParent);
-      const first = focusables[0];
-      const last = focusables[focusables.length - 1];
-
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
     });
   });
 
@@ -117,138 +83,84 @@ const initNavigation = () => {
   const toggle = $(".nav-toggle");
   const nav = $("#main-nav");
 
-  const close = () => {
-    nav.classList.remove("is-open");
-    toggle.setAttribute("aria-expanded", "false");
-    toggle.setAttribute("aria-label", "Ouvrir le menu de navigation");
-  };
-
   toggle.addEventListener("click", () => {
     const isOpen = nav.classList.toggle("is-open");
     toggle.setAttribute("aria-expanded", String(isOpen));
-    toggle.setAttribute(
-      "aria-label",
-      `${isOpen ? "Fermer" : "Ouvrir"} le menu de navigation`,
-    );
-  });
-
-  $$(".nav-link", nav).forEach((link) => link.addEventListener("click", close));
-
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && nav.classList.contains("is-open")) {
-      close();
-      toggle.focus();
-    }
   });
 };
 
 const projectCard = (project) => `
   <article class="card">
-    <div class="card-media">
-      <img src="${escapeHtml(project.image)}" alt="Aperçu du projet ${escapeHtml(project.title)}"
-           loading="lazy" width="800" height="450">
-      <span class="badge badge-category">${escapeHtml(project.category)}</span>
-    </div>
+    <img src="${clean(project.image)}" alt="Aperçu du projet ${clean(project.title)}" loading="lazy">
     <div class="card-body">
-      <h3 class="card-title">${escapeHtml(project.title)}</h3>
-      <p class="card-client">Client : <strong>${escapeHtml(project.client)}</strong></p>
-      <p class="card-meta">
-        <span>${escapeHtml(project.year)}</span>
-        <span>${escapeHtml(project.duration)}</span>
+      <h3>${clean(project.title)}</h3>
+      <p>Client : ${clean(project.client)}</p>
+      <p class="card-meta">${clean(project.category)} &middot; ${clean(project.year)} &middot; ${clean(project.duration)}</p>
+      <ul class="badges">${badges(project.technologies)}</ul>
+      <p class="card-actions">
+        <button class="btn btn-primary" type="button" data-id="${project.id}">Voir détails</button>
       </p>
-      <ul class="badge-list">${badgeList(project.technologies)}</ul>
-      <div class="card-actions">
-        <button class="btn btn-primary" type="button" data-details="${escapeHtml(project.id)}">
-          Voir détails
-        </button>
-      </div>
     </div>
   </article>
 `;
 
 const projectDetails = (project) => `
-  <div class="modal-media">
-    <img src="${escapeHtml(project.image)}" alt="Aperçu du projet ${escapeHtml(project.title)}"
-         width="800" height="450">
-  </div>
-  <p>${escapeHtml(project.description)}</p>
-  <dl class="info-grid">
-    <div><dt>Client</dt><dd>${escapeHtml(project.client)}</dd></div>
-    <div><dt>Catégorie</dt><dd>${escapeHtml(project.category)}</dd></div>
-    <div><dt>Année</dt><dd>${escapeHtml(project.year)}</dd></div>
-    <div><dt>Durée</dt><dd>${escapeHtml(project.duration)}</dd></div>
+  <img src="${clean(project.image)}" alt="Aperçu du projet ${clean(project.title)}">
+  <p>${clean(project.description)}</p>
+  <dl class="infos">
+    <div><dt>Client</dt><dd>${clean(project.client)}</dd></div>
+    <div><dt>Catégorie</dt><dd>${clean(project.category)}</dd></div>
+    <div><dt>Année</dt><dd>${clean(project.year)}</dd></div>
+    <div><dt>Durée</dt><dd>${clean(project.duration)}</dd></div>
   </dl>
-  <h3>Technologies utilisées</h3>
-  <ul class="badge-list">${badgeList(project.technologies)}</ul>
-  <h3>Fonctionnalités clés</h3>
-  <ul class="check-list">
-    ${(project.features ?? []).map((feature) => `<li>${escapeHtml(feature)}</li>`).join("")}
-  </ul>
-  <div class="modal-actions">
-    <a class="btn btn-primary" href="${escapeHtml(project.url)}" target="_blank" rel="noopener">
-      Visiter le site du projet
-    </a>
-  </div>
+  <h3>Technologies</h3>
+  <ul class="badges">${badges(project.technologies)}</ul>
+  <h3>Fonctionnalités</h3>
+  <ul class="liste">${project.features.map((item) => `<li>${clean(item)}</li>`).join("")}</ul>
+  <p class="modal-actions">
+    <a class="btn btn-primary" href="${clean(project.url)}" target="_blank" rel="noopener">Visiter le site</a>
+  </p>
 `;
 
 const courseCard = (course) => `
   <article class="card">
-    <div class="card-media">
-      <img src="${escapeHtml(course.image)}" alt="Illustration de la formation ${escapeHtml(course.title)}"
-           loading="lazy" width="800" height="450">
-      <span class="badge badge-category">${escapeHtml(course.category)}</span>
-    </div>
+    <img src="${clean(course.image)}" alt="Illustration de la formation ${clean(course.title)}" loading="lazy">
     <div class="card-body">
-      <h3 class="card-title">${escapeHtml(course.title)}</h3>
-      <ul class="badge-list">
-        <li class="badge badge-level">${escapeHtml(course.level)}</li>
-        ${availabilityBadge(course)}
+      <h3>${clean(course.title)}</h3>
+      <ul class="badges">
+        <li class="badge">${clean(course.category)}</li>
+        <li class="badge">${clean(course.level)}</li>
+        <li class="badge ${course.available ? "badge-fort" : "badge-complet"}">${course.available ? "Disponible" : "Complet"}</li>
       </ul>
-      <p class="card-meta">
-        <span>${escapeHtml(course.duration)}</span>
-        <span class="rating"><span class="rating-star" aria-hidden="true">&#9733;</span> ${escapeHtml(course.rating)} / 5</span>
-        <span>${escapeHtml(course.students)} étudiants</span>
+      <p class="card-meta">${clean(course.duration)} &middot; ★ ${clean(course.rating)} / 5 &middot; ${clean(course.students)} étudiants</p>
+      <p class="card-price">${clean(course.price)} €</p>
+      <ul class="badges">${badges(course.technologies)}</ul>
+      <p class="card-actions">
+        <button class="btn" type="button" data-id="${course.id}">Voir détails</button>
+        <a class="btn btn-primary" href="inscription.html?formation=${course.id}">S'inscrire</a>
       </p>
-      <p class="card-price">${escapeHtml(course.price)} &euro;</p>
-      <ul class="badge-list">${badgeList(course.technologies)}</ul>
-      <div class="card-actions">
-        <button class="btn btn-ghost" type="button" data-details="${escapeHtml(course.id)}">
-          Voir détails
-        </button>
-        <a class="btn btn-primary" href="inscription.html?formation=${escapeHtml(course.id)}">S'inscrire</a>
-      </div>
     </div>
   </article>
 `;
 
 const courseDetails = (course) => `
-  <div class="modal-media">
-    <img src="${escapeHtml(course.image)}" alt="Illustration de la formation ${escapeHtml(course.title)}"
-         width="800" height="450">
-  </div>
-  <ul class="badge-list">
-    <li class="badge badge-category">${escapeHtml(course.category)}</li>
-    <li class="badge badge-level">${escapeHtml(course.level)}</li>
-    ${availabilityBadge(course)}
-  </ul>
-  <p>${escapeHtml(course.description)}</p>
-  <dl class="info-grid">
-    <div><dt>Formateur</dt><dd>${escapeHtml(course.instructor)}</dd></div>
-    <div><dt>Durée</dt><dd>${escapeHtml(course.duration)}</dd></div>
-    <div><dt>Tarif</dt><dd>${escapeHtml(course.price)} &euro;</dd></div>
-    <div><dt>Note moyenne</dt><dd><span class="rating-star" aria-hidden="true">&#9733;</span> ${escapeHtml(course.rating)} / 5</dd></div>
-    <div><dt>Étudiants inscrits</dt><dd>${escapeHtml(course.students)}</dd></div>
-    <div><dt>Niveau requis</dt><dd>${escapeHtml(course.level)}</dd></div>
+  <img src="${clean(course.image)}" alt="Illustration de la formation ${clean(course.title)}">
+  <p>${clean(course.description)}</p>
+  <dl class="infos">
+    <div><dt>Formateur</dt><dd>${clean(course.instructor)}</dd></div>
+    <div><dt>Catégorie</dt><dd>${clean(course.category)}</dd></div>
+    <div><dt>Niveau</dt><dd>${clean(course.level)}</dd></div>
+    <div><dt>Durée</dt><dd>${clean(course.duration)}</dd></div>
+    <div><dt>Tarif</dt><dd>${clean(course.price)} €</dd></div>
+    <div><dt>Note</dt><dd>★ ${clean(course.rating)} / 5 (${clean(course.students)} étudiants)</dd></div>
   </dl>
-  <h3>Technologies abordées</h3>
-  <ul class="badge-list">${badgeList(course.technologies)}</ul>
-  <h3>Modules du programme</h3>
-  <ul class="check-list">
-    ${(course.modules ?? []).map((module) => `<li>${escapeHtml(module)}</li>`).join("")}
-  </ul>
-  <div class="modal-actions">
-    <a class="btn btn-accent" href="inscription.html?formation=${escapeHtml(course.id)}">S'inscrire maintenant</a>
-  </div>
+  <h3>Technologies</h3>
+  <ul class="badges">${badges(course.technologies)}</ul>
+  <h3>Modules</h3>
+  <ul class="liste">${course.modules.map((item) => `<li>${clean(item)}</li>`).join("")}</ul>
+  <p class="modal-actions">
+    <a class="btn btn-primary" href="inscription.html?formation=${course.id}">S'inscrire maintenant</a>
+  </p>
 `;
 
 const CATALOGS = [
@@ -259,13 +171,7 @@ const CATALOGS = [
     label: "les projets",
     noun: "projet",
     selects: { tech: "technologies", category: "categories" },
-    searchable: (project) => [
-      project.title,
-      project.client,
-      project.description,
-      project.category,
-      ...project.technologies,
-    ],
+    texte: (project) => [project.title, project.client, project.description],
     match: (project, { tech, category }) =>
       (!tech || project.technologies.includes(tech)) &&
       (!category || project.category === category),
@@ -279,13 +185,7 @@ const CATALOGS = [
     label: "les formations",
     noun: "formation",
     selects: { category: "categories", level: "levels", tech: "technologies" },
-    searchable: (course) => [
-      course.title,
-      course.description,
-      course.instructor,
-      course.category,
-      ...course.technologies,
-    ],
+    texte: (course) => [course.title, course.description, course.instructor],
     match: (course, { category, level, tech }) =>
       (!category || course.category === category) &&
       (!level || course.level === level) &&
@@ -295,73 +195,64 @@ const CATALOGS = [
   },
 ];
 
-const initCatalog = ({
-  key,
-  prefix,
-  url,
-  label,
-  noun,
-  selects,
-  searchable,
-  match,
-  card,
-  details,
-}) => {
-  const grid = $(`#${prefix}-grid`);
+const initCatalog = (catalog) => {
+  const grid = $(`#${catalog.prefix}-grid`);
   if (!grid) return;
 
-  const search = $(`#${prefix}-search`);
-  const empty = $(`#${prefix}-empty`);
-  const count = $(`#${prefix}-count`);
-  const modal = $(`#${prefix}-modal`);
-  const filters = Object.keys(selects).map((name) => [
+  const search = $(`#${catalog.prefix}-search`);
+  const empty = $(`#${catalog.prefix}-empty`);
+  const count = $(`#${catalog.prefix}-count`);
+  const modal = $(`#${catalog.prefix}-modal`);
+  const selects = Object.keys(catalog.selects).map((name) => [
     name,
-    $(`#${prefix}-${name}`),
+    $(`#${catalog.prefix}-${name}`),
   ]);
 
   const render = () => {
-    const query = normalize(search.value.trim());
-    const values = Object.fromEntries(
-      filters.map(([name, select]) => [name, select.value]),
+    const query = search.value.trim().toLowerCase();
+    const choix = Object.fromEntries(
+      selects.map(([name, select]) => [name, select.value]),
     );
-
-    const results = store[key].filter(
+    const items = store[catalog.key].filter(
       (item) =>
-        (!query || normalize(searchable(item).join(" ")).includes(query)) &&
-        match(item, values),
+        catalog.texte(item).join(" ").toLowerCase().includes(query) &&
+        catalog.match(item, choix),
     );
 
-    grid.innerHTML = results.map(card).join("");
-    show(empty, results.length === 0);
+    grid.innerHTML = items.map(catalog.card).join("");
+    show(empty, items.length === 0);
     show(count, true);
-    count.textContent = `${results.length} ${noun}${results.length > 1 ? "s" : ""} sur ${store[key].length}`;
+    count.textContent = `${items.length} ${catalog.noun}${items.length > 1 ? "s" : ""} sur ${store[catalog.key].length}`;
   };
 
   search.addEventListener("input", debounce(render));
-  filters.forEach(([, select]) => select.addEventListener("change", render));
-  $(`#${prefix}-filters`).addEventListener("reset", () => setTimeout(render, 0));
+  selects.forEach(([, select]) => select.addEventListener("change", render));
+  $(`#${catalog.prefix}-filters`).addEventListener("reset", () =>
+    setTimeout(render),
+  );
 
   grid.addEventListener("click", (event) => {
-    const trigger = event.target.closest("[data-details]");
-    if (!trigger) return;
+    const bouton = event.target.closest("[data-id]");
+    if (!bouton) return;
 
-    const item = store[key].find(
-      (entry) => String(entry.id) === trigger.dataset.details,
+    const item = store[catalog.key].find(
+      (entry) => String(entry.id) === bouton.dataset.id,
     );
-
-    $(`#${prefix}-modal-title`).textContent = item.title;
-    $(`#${prefix}-modal-body`).innerHTML = details(item);
+    $(`#${catalog.prefix}-modal-title`).textContent = item.title;
+    $(`#${catalog.prefix}-modal-body`).innerHTML = catalog.details(item);
     openModal(modal);
   });
 
   loadData({
-    url,
-    label,
-    loader: $(`#${prefix}-loader`),
-    errorBox: $(`#${prefix}-error`),
+    url: catalog.url,
+    label: catalog.label,
+    loader: $(`#${catalog.prefix}-loader`),
+    errorBox: $(`#${catalog.prefix}-error`),
     onSuccess: (data) => {
-      store[key] = data[key] ?? [];
-      filters.forEach(([name, select]) => fillSelect(select, data[selects[name]]));
+      store[catalog.key] = data[catalog.key];
+      selects.forEach(([name, select]) => {
+        select.innerHTML += options(data[catalog.selects[name]]);
+      });
       render();
     },
   });
@@ -384,19 +275,16 @@ const VALIDATORS = {
     /^\+[0-9]{8,15}$/.test(value.replace(/[\s.-]/g, ""))
       ? ""
       : "Numéro au format international attendu (exemple : +33 6 12 34 56 78).",
-  course: (value) => (value ? "" : "Choisissez la formation qui vous intéresse."),
-  level: (value) => (value ? "" : "Indiquez votre niveau actuel."),
+  course: (value) => (value ? "" : "Choisissez une formation."),
+  level: (value) => (value ? "" : "Indiquez votre niveau."),
   motivation: (value) =>
     value.trim().length >= MOTIVATION_MIN
       ? ""
       : `Votre motivation doit contenir au moins ${MOTIVATION_MIN} caractères (actuellement ${value.trim().length}).`,
-  experience: (value) => {
-    if (!value.trim()) return "";
-    const years = Number(value);
-    return Number.isInteger(years) && years >= 0 && years <= 50
+  experience: (value) =>
+    !value.trim() || (Number(value) >= 0 && Number(value) <= 50)
       ? ""
-      : "Saisissez un nombre entier d'années compris entre 0 et 50.";
-  },
+      : "Saisissez un nombre d'années compris entre 0 et 50.",
 };
 
 const initSignupForm = () => {
@@ -407,7 +295,6 @@ const initSignupForm = () => {
   const motivation = $("#motivation");
   const counter = $("#motivation-counter");
   const globalError = $("#form-global-error");
-  const summary = $("#summary-content");
   const fields = Object.keys(VALIDATORS).map((name) => form.elements[name]);
 
   const validate = (field) => {
@@ -415,48 +302,25 @@ const initSignupForm = () => {
     const errorBox = $(`#${field.id}-error`);
 
     field.classList.toggle("is-invalid", message !== "");
-    field.classList.toggle("is-valid", message === "" && field.value.trim() !== "");
-    field.setAttribute("aria-invalid", String(message !== ""));
+    field.classList.toggle("is-valid", message === "" && field.value !== "");
     errorBox.textContent = message;
     show(errorBox, message !== "");
 
     return message === "";
   };
 
-  const clearStates = () => {
-    fields.forEach((field) => {
-      field.classList.remove("is-valid", "is-invalid");
-      field.removeAttribute("aria-invalid");
-      show($(`#${field.id}-error`), false);
-    });
-    show(globalError, false);
-  };
-
   const updateCounter = () => {
     const length = motivation.value.trim().length;
     counter.textContent = `${length} / ${MOTIVATION_MIN} caractères minimum`;
-    counter.classList.toggle("counter-ok", length >= MOTIVATION_MIN);
   };
 
-  const selectedCourse = () =>
-    store.courses.find((course) => String(course.id) === courseSelect.value);
-
-  const updateSummary = () => {
-    const course = selectedCourse();
-
-    summary.innerHTML = course
-      ? `<h3 class="card-title">${escapeHtml(course.title)}</h3>
-         <ul class="badge-list">
-           <li class="badge badge-category">${escapeHtml(course.category)}</li>
-           <li class="badge badge-level">${escapeHtml(course.level)}</li>
-           ${availabilityBadge(course)}
-         </ul>
-         <p class="summary-price">${escapeHtml(course.price)} &euro;</p>
-         <dl class="info-grid">
-           <div><dt>Formateur</dt><dd>${escapeHtml(course.instructor)}</dd></div>
-           <div><dt>Durée</dt><dd>${escapeHtml(course.duration)}</dd></div>
-         </dl>`
-      : '<p class="muted">Sélectionnez une formation pour afficher son détail.</p>';
+  const resetStates = () => {
+    fields.forEach((field) => {
+      field.classList.remove("is-valid", "is-invalid");
+      show($(`#${field.id}-error`), false);
+    });
+    show(globalError, false);
+    updateCounter();
   };
 
   fields.forEach((field) => {
@@ -468,7 +332,7 @@ const initSignupForm = () => {
   });
 
   motivation.addEventListener("input", updateCounter);
-  courseSelect.addEventListener("change", updateSummary);
+  form.addEventListener("reset", () => setTimeout(resetStates));
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -476,28 +340,21 @@ const initSignupForm = () => {
     const invalid = fields.filter((field) => !validate(field));
 
     if (invalid.length) {
-      globalError.textContent = `Le formulaire comporte ${invalid.length} champ${invalid.length > 1 ? "s" : ""} à corriger. Les erreurs sont signalées ci-dessous.`;
+      globalError.textContent = `Le formulaire comporte ${invalid.length} champ${invalid.length > 1 ? "s" : ""} à corriger.`;
       show(globalError, true);
       invalid[0].focus();
       return;
     }
 
-    $("#success-message").textContent = `Merci ${form.elements.firstname.value.trim()}, votre inscription à la formation « ${selectedCourse().title} » est enregistrée.`;
+    const course = store.courses.find(
+      (item) => String(item.id) === courseSelect.value,
+    );
+    $("#success-message").textContent = `Merci ${form.elements.firstname.value.trim()}, votre inscription à la formation « ${course.title} » est enregistrée.`;
     openModal($("#success-modal"));
 
     form.reset();
-    clearStates();
-    updateCounter();
-    updateSummary();
+    resetStates();
   });
-
-  form.addEventListener("reset", () =>
-    setTimeout(() => {
-      clearStates();
-      updateCounter();
-      updateSummary();
-    }, 0),
-  );
 
   updateCounter();
 
@@ -506,23 +363,18 @@ const initSignupForm = () => {
     label: "la liste des formations",
     errorBox: $("#course-load-error"),
     onSuccess: (data) => {
-      store.courses = data.courses ?? [];
+      store.courses = data.courses;
       courseSelect.innerHTML =
         '<option value="">Sélectionnez une formation</option>' +
         store.courses
           .map(
             (course) =>
-              `<option value="${escapeHtml(course.id)}"${course.available ? "" : " disabled"}>${escapeHtml(course.title)} - ${escapeHtml(course.level)} - ${escapeHtml(course.price)} EUR${course.available ? "" : " (complet)"}</option>`,
+              `<option value="${course.id}"${course.available ? "" : " disabled"}>${clean(course.title)} (${clean(course.level)}, ${clean(course.price)} €)${course.available ? "" : " - complet"}</option>`,
           )
           .join("");
 
-      const requested = new URLSearchParams(location.search).get("formation");
-      if (requested && courseSelect.querySelector(`option[value="${requested}"]`)) {
-        courseSelect.value = requested;
-        $("#level").focus();
-      }
-
-      updateSummary();
+      const demande = new URLSearchParams(location.search).get("formation");
+      if (demande) courseSelect.value = demande;
     },
   });
 };

@@ -9,27 +9,20 @@
 </head>
 <body>
 
-  <a class="skip-link" href="#projets">Aller au contenu principal</a>
+  <a class="skip-link" href="#projets">Aller au contenu</a>
 
   <header class="site-header">
     <div class="container header-inner">
-      <a class="logo" href="index.html">
-        <span class="logo-mark" aria-hidden="true">W</span>
-        <span class="logo-text">WebCraft <strong>Solutions</strong></span>
-      </a>
+      <a class="logo" href="index.html">WebCraft <strong>Solutions</strong></a>
 
-      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" aria-label="Ouvrir le menu de navigation">
-        <span class="nav-toggle-bar" aria-hidden="true"></span>
-        <span class="nav-toggle-bar" aria-hidden="true"></span>
-        <span class="nav-toggle-bar" aria-hidden="true"></span>
-      </button>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav">Menu</button>
 
       <nav class="main-nav" id="main-nav" aria-label="Navigation principale">
-        <ul class="nav-list">
-          <li><a class="nav-link is-active" href="#accueil">Accueil</a></li>
-          <li><a class="nav-link" href="#projets">Projets</a></li>
-          <li><a class="nav-link" href="#formations">Formations</a></li>
-          <li><a class="nav-link nav-link-cta" href="inscription.html">Inscription</a></li>
+        <ul>
+          <li><a href="#accueil">Accueil</a></li>
+          <li><a href="#projets">Projets</a></li>
+          <li><a href="#formations">Formations</a></li>
+          <li><a href="inscription.html">Inscription</a></li>
         </ul>
       </nav>
     </div>
@@ -38,128 +31,93 @@
   <main>
 
     <section class="hero" id="accueil">
-      <div class="container hero-inner">
-        <p class="hero-eyebrow">Agence web &amp; centre de formation</p>
-        <h1 class="hero-title">Nous concevons le web,<br>et nous l'enseignons.</h1>
-        <p class="hero-subtitle">
-          D&eacute;couvrez nos r&eacute;alisations clients et notre catalogue de formations
-          techniques, con&ccedil;ues par des d&eacute;veloppeurs en activit&eacute;.
+      <div class="container">
+        <h1>Nous concevons le web, et nous l'enseignons.</h1>
+        <p>Portfolio de nos projets clients et catalogue de nos formations techniques.</p>
+        <p class="hero-actions">
+          <a class="btn btn-primary" href="#projets">Voir les projets</a>
+          <a class="btn" href="#formations">Voir les formations</a>
         </p>
-        <div class="hero-actions">
-          <a class="btn btn-primary" href="#projets">Voir nos projets</a>
-          <a class="btn btn-ghost" href="#formations">Explorer les formations</a>
-        </div>
       </div>
     </section>
 
     <section class="section" id="projets">
       <div class="container">
-        <div class="section-head">
-          <p class="section-eyebrow">Vitrine externe</p>
-          <h2>Portfolio de projets clients</h2>
-          <p class="section-intro">
-            Chaque projet est d&eacute;velopp&eacute; sur mesure. Filtrez par technologie
-            ou par cat&eacute;gorie pour trouver une r&eacute;alisation proche de votre besoin.
-          </p>
-        </div>
+        <h2>Projets clients</h2>
+        <p class="section-intro">Filtrez par technologie ou par cat&eacute;gorie.</p>
 
         <form class="filters" id="project-filters" role="search" aria-label="Filtrer les projets">
-          <div class="field field-search">
-            <label for="project-search">Rechercher un projet</label>
-            <input type="search" id="project-search" name="project-search"
-                   placeholder="Titre, client ou mot-cl&eacute;&hellip;" autocomplete="off">
-          </div>
-
-          <div class="field">
+          <p class="field">
+            <label for="project-search">Rechercher</label>
+            <input type="search" id="project-search" placeholder="Titre, client, mot-cl&eacute;" autocomplete="off">
+          </p>
+          <p class="field">
             <label for="project-tech">Technologie</label>
-            <select id="project-tech" name="project-tech">
-              <option value="">Toutes les technologies</option>
+            <select id="project-tech">
+              <option value="">Toutes</option>
             </select>
-          </div>
-
-          <div class="field">
+          </p>
+          <p class="field">
             <label for="project-category">Cat&eacute;gorie</label>
-            <select id="project-category" name="project-category">
-              <option value="">Toutes les cat&eacute;gories</option>
+            <select id="project-category">
+              <option value="">Toutes</option>
             </select>
-          </div>
-
-          <button class="btn btn-ghost filters-reset" type="reset" id="project-reset">R&eacute;initialiser</button>
+          </p>
+          <p class="field field-action">
+            <button class="btn" type="reset">R&eacute;initialiser</button>
+          </p>
         </form>
 
-        <div class="loader" id="project-loader">
-          <span class="spinner" aria-hidden="true"></span>
-          <p>Chargement des projets&hellip;</p>
-        </div>
+        <p class="loader" id="project-loader"><span class="spinner" aria-hidden="true"></span> Chargement des projets&hellip;</p>
+        <p class="alert" id="project-error" role="alert" hidden></p>
+        <p class="results" id="project-count" role="status" hidden></p>
 
-        <p class="alert alert-error" id="project-error" role="alert" hidden></p>
+        <div class="grid" id="project-grid"></div>
 
-        <p class="results-count" id="project-count" role="status" hidden></p>
-
-        <div class="card-grid" id="project-grid"></div>
-
-        <p class="alert alert-empty" id="project-empty" hidden>
-          Aucun projet ne correspond &agrave; votre recherche.
-        </p>
+        <p class="alert" id="project-empty" hidden>Aucun projet ne correspond &agrave; votre recherche.</p>
       </div>
     </section>
 
     <section class="section section-alt" id="formations">
       <div class="container">
-        <div class="section-head">
-          <p class="section-eyebrow">Plateforme interne</p>
-          <h2>Catalogue de formations techniques</h2>
-          <p class="section-intro">
-            Des parcours courts et intensifs, anim&eacute;s par nos experts.
-            Filtrez par cat&eacute;gorie, niveau ou technologie.
+        <h2>Formations techniques</h2>
+        <p class="section-intro">Filtrez par cat&eacute;gorie, niveau ou technologie.</p>
+
+        <form class="filters" id="course-filters" role="search" aria-label="Filtrer les formations">
+          <p class="field">
+            <label for="course-search">Rechercher</label>
+            <input type="search" id="course-search" placeholder="Titre, formateur, mot-cl&eacute;" autocomplete="off">
           </p>
-        </div>
-
-        <form class="filters filters-4" id="course-filters" role="search" aria-label="Filtrer les formations">
-          <div class="field field-search">
-            <label for="course-search">Rechercher une formation</label>
-            <input type="search" id="course-search" name="course-search"
-                   placeholder="Titre, formateur ou mot-cl&eacute;&hellip;" autocomplete="off">
-          </div>
-
-          <div class="field">
+          <p class="field">
             <label for="course-category">Cat&eacute;gorie</label>
-            <select id="course-category" name="course-category">
-              <option value="">Toutes les cat&eacute;gories</option>
+            <select id="course-category">
+              <option value="">Toutes</option>
             </select>
-          </div>
-
-          <div class="field">
+          </p>
+          <p class="field">
             <label for="course-level">Niveau</label>
-            <select id="course-level" name="course-level">
-              <option value="">Tous les niveaux</option>
+            <select id="course-level">
+              <option value="">Tous</option>
             </select>
-          </div>
-
-          <div class="field">
+          </p>
+          <p class="field">
             <label for="course-tech">Technologie</label>
-            <select id="course-tech" name="course-tech">
-              <option value="">Toutes les technologies</option>
+            <select id="course-tech">
+              <option value="">Toutes</option>
             </select>
-          </div>
-
-          <button class="btn btn-ghost filters-reset" type="reset" id="course-reset">R&eacute;initialiser</button>
+          </p>
+          <p class="field field-action">
+            <button class="btn" type="reset">R&eacute;initialiser</button>
+          </p>
         </form>
 
-        <div class="loader" id="course-loader">
-          <span class="spinner" aria-hidden="true"></span>
-          <p>Chargement des formations&hellip;</p>
-        </div>
+        <p class="loader" id="course-loader"><span class="spinner" aria-hidden="true"></span> Chargement des formations&hellip;</p>
+        <p class="alert" id="course-error" role="alert" hidden></p>
+        <p class="results" id="course-count" role="status" hidden></p>
 
-        <p class="alert alert-error" id="course-error" role="alert" hidden></p>
+        <div class="grid" id="course-grid"></div>
 
-        <p class="results-count" id="course-count" role="status" hidden></p>
-
-        <div class="card-grid" id="course-grid"></div>
-
-        <p class="alert alert-empty" id="course-empty" hidden>
-          Aucune formation ne correspond &agrave; votre recherche.
-        </p>
+        <p class="alert" id="course-empty" hidden>Aucune formation ne correspond &agrave; votre recherche.</p>
       </div>
     </section>
 
@@ -167,36 +125,21 @@
 
   <footer class="site-footer">
     <div class="container footer-inner">
-      <div class="footer-brand">
-        <span class="logo-mark" aria-hidden="true">W</span>
-        <p>WebCraft Solutions<br><span class="muted">Portfolio clients &amp; formations techniques</span></p>
-      </div>
-
-      <nav class="footer-nav" aria-label="Navigation du pied de page">
-        <ul>
-          <li><a href="#projets">Projets</a></li>
-          <li><a href="#formations">Formations</a></li>
-          <li><a href="inscription.html">Inscription</a></li>
-        </ul>
-      </nav>
-
-      <ul class="social-list">
-        <li><a href="https://github.com" aria-label="WebCraft Solutions sur GitHub">GitHub</a></li>
-        <li><a href="https://www.linkedin.com" aria-label="WebCraft Solutions sur LinkedIn">LinkedIn</a></li>
-        <li><a href="https://x.com" aria-label="WebCraft Solutions sur X">X</a></li>
+      <p>&copy; 2026 WebCraft Solutions. Tous droits r&eacute;serv&eacute;s.</p>
+      <ul class="social">
+        <li><a href="https://github.com">GitHub</a></li>
+        <li><a href="https://www.linkedin.com">LinkedIn</a></li>
+        <li><a href="https://x.com">X</a></li>
       </ul>
     </div>
-    <p class="copyright">&copy; 2026 WebCraft Solutions. Tous droits r&eacute;serv&eacute;s.</p>
   </footer>
 
   <div class="modal" id="project-modal" hidden>
     <div class="modal-overlay" data-close-modal></div>
-    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="project-modal-title">
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="project-modal-title">
       <div class="modal-head">
-        <h2 class="modal-title" id="project-modal-title">D&eacute;tail du projet</h2>
-        <button class="modal-close" type="button" data-close-modal aria-label="Fermer la fen&ecirc;tre de d&eacute;tail">
-          <span aria-hidden="true">&#10005;</span>
-        </button>
+        <h2 id="project-modal-title">D&eacute;tail du projet</h2>
+        <button class="modal-close" type="button" data-close-modal aria-label="Fermer">&#10005;</button>
       </div>
       <div class="modal-body" id="project-modal-body"></div>
     </div>
@@ -204,12 +147,10 @@
 
   <div class="modal" id="course-modal" hidden>
     <div class="modal-overlay" data-close-modal></div>
-    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="course-modal-title">
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="course-modal-title">
       <div class="modal-head">
-        <h2 class="modal-title" id="course-modal-title">D&eacute;tail de la formation</h2>
-        <button class="modal-close" type="button" data-close-modal aria-label="Fermer la fen&ecirc;tre de d&eacute;tail">
-          <span aria-hidden="true">&#10005;</span>
-        </button>
+        <h2 id="course-modal-title">D&eacute;tail de la formation</h2>
+        <button class="modal-close" type="button" data-close-modal aria-label="Fermer">&#10005;</button>
       </div>
       <div class="modal-body" id="course-modal-body"></div>
     </div>
