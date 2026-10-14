@@ -56,10 +56,10 @@ const loadData = async ({ url, label, loader, errorBox, onSuccess }) => {
 
   try {
     const response = await fetch(url);
-    if (!response.ok) throw new Error(`reponse HTTP ${response.status}`);
+    if (!response.ok) throw new Error(`réponse HTTP ${response.status}`);
     onSuccess(await response.json());
   } catch (error) {
-    errorBox.textContent = `Impossible de charger ${label}. Verifiez votre connexion puis rechargez la page (${error.message}).`;
+    errorBox.textContent = `Impossible de charger ${label}. Vérifiez votre connexion puis rechargez la page (${error.message}).`;
     show(errorBox, true);
   } finally {
     show(loader, false);
@@ -145,7 +145,7 @@ const initNavigation = () => {
 const projectCard = (project) => `
   <article class="card">
     <div class="card-media">
-      <img src="${escapeHtml(project.image)}" alt="Apercu du projet ${escapeHtml(project.title)}"
+      <img src="${escapeHtml(project.image)}" alt="Aperçu du projet ${escapeHtml(project.title)}"
            loading="lazy" width="800" height="450">
       <span class="badge badge-category">${escapeHtml(project.category)}</span>
     </div>
@@ -159,7 +159,7 @@ const projectCard = (project) => `
       <ul class="badge-list">${badgeList(project.technologies)}</ul>
       <div class="card-actions">
         <button class="btn btn-primary" type="button" data-details="${escapeHtml(project.id)}">
-          Voir details
+          Voir détails
         </button>
       </div>
     </div>
@@ -168,19 +168,19 @@ const projectCard = (project) => `
 
 const projectDetails = (project) => `
   <div class="modal-media">
-    <img src="${escapeHtml(project.image)}" alt="Apercu du projet ${escapeHtml(project.title)}"
+    <img src="${escapeHtml(project.image)}" alt="Aperçu du projet ${escapeHtml(project.title)}"
          width="800" height="450">
   </div>
   <p>${escapeHtml(project.description)}</p>
   <dl class="info-grid">
     <div><dt>Client</dt><dd>${escapeHtml(project.client)}</dd></div>
-    <div><dt>Categorie</dt><dd>${escapeHtml(project.category)}</dd></div>
-    <div><dt>Annee</dt><dd>${escapeHtml(project.year)}</dd></div>
-    <div><dt>Duree</dt><dd>${escapeHtml(project.duration)}</dd></div>
+    <div><dt>Catégorie</dt><dd>${escapeHtml(project.category)}</dd></div>
+    <div><dt>Année</dt><dd>${escapeHtml(project.year)}</dd></div>
+    <div><dt>Durée</dt><dd>${escapeHtml(project.duration)}</dd></div>
   </dl>
-  <h3>Technologies utilisees</h3>
+  <h3>Technologies utilisées</h3>
   <ul class="badge-list">${badgeList(project.technologies)}</ul>
-  <h3>Fonctionnalites cles</h3>
+  <h3>Fonctionnalités clés</h3>
   <ul class="check-list">
     ${(project.features ?? []).map((feature) => `<li>${escapeHtml(feature)}</li>`).join("")}
   </ul>
@@ -207,13 +207,13 @@ const courseCard = (course) => `
       <p class="card-meta">
         <span>${escapeHtml(course.duration)}</span>
         <span class="rating"><span class="rating-star" aria-hidden="true">&#9733;</span> ${escapeHtml(course.rating)} / 5</span>
-        <span>${escapeHtml(course.students)} etudiants</span>
+        <span>${escapeHtml(course.students)} étudiants</span>
       </p>
       <p class="card-price">${escapeHtml(course.price)} &euro;</p>
       <ul class="badge-list">${badgeList(course.technologies)}</ul>
       <div class="card-actions">
         <button class="btn btn-ghost" type="button" data-details="${escapeHtml(course.id)}">
-          Voir details
+          Voir détails
         </button>
         <a class="btn btn-primary" href="inscription.html?formation=${escapeHtml(course.id)}">S'inscrire</a>
       </div>
@@ -234,13 +234,13 @@ const courseDetails = (course) => `
   <p>${escapeHtml(course.description)}</p>
   <dl class="info-grid">
     <div><dt>Formateur</dt><dd>${escapeHtml(course.instructor)}</dd></div>
-    <div><dt>Duree</dt><dd>${escapeHtml(course.duration)}</dd></div>
+    <div><dt>Durée</dt><dd>${escapeHtml(course.duration)}</dd></div>
     <div><dt>Tarif</dt><dd>${escapeHtml(course.price)} &euro;</dd></div>
     <div><dt>Note moyenne</dt><dd><span class="rating-star" aria-hidden="true">&#9733;</span> ${escapeHtml(course.rating)} / 5</dd></div>
-    <div><dt>Etudiants inscrits</dt><dd>${escapeHtml(course.students)}</dd></div>
+    <div><dt>Étudiants inscrits</dt><dd>${escapeHtml(course.students)}</dd></div>
     <div><dt>Niveau requis</dt><dd>${escapeHtml(course.level)}</dd></div>
   </dl>
-  <h3>Technologies abordees</h3>
+  <h3>Technologies abordées</h3>
   <ul class="badge-list">${badgeList(course.technologies)}</ul>
   <h3>Modules du programme</h3>
   <ul class="check-list">
@@ -373,9 +373,9 @@ const VALIDATORS = {
   firstname: (value) =>
     value.trim().length >= 2
       ? ""
-      : "Le prenom doit contenir au moins 2 caracteres.",
+      : "Le prénom doit contenir au moins 2 caractères.",
   lastname: (value) =>
-    value.trim().length >= 2 ? "" : "Le nom doit contenir au moins 2 caracteres.",
+    value.trim().length >= 2 ? "" : "Le nom doit contenir au moins 2 caractères.",
   email: (value) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())
       ? ""
@@ -383,19 +383,19 @@ const VALIDATORS = {
   phone: (value) =>
     /^\+[0-9]{8,15}$/.test(value.replace(/[\s.-]/g, ""))
       ? ""
-      : "Numero au format international attendu (exemple : +33 6 12 34 56 78).",
-  course: (value) => (value ? "" : "Choisissez la formation qui vous interesse."),
+      : "Numéro au format international attendu (exemple : +33 6 12 34 56 78).",
+  course: (value) => (value ? "" : "Choisissez la formation qui vous intéresse."),
   level: (value) => (value ? "" : "Indiquez votre niveau actuel."),
   motivation: (value) =>
     value.trim().length >= MOTIVATION_MIN
       ? ""
-      : `Votre motivation doit contenir au moins ${MOTIVATION_MIN} caracteres (actuellement ${value.trim().length}).`,
+      : `Votre motivation doit contenir au moins ${MOTIVATION_MIN} caractères (actuellement ${value.trim().length}).`,
   experience: (value) => {
     if (!value.trim()) return "";
     const years = Number(value);
     return Number.isInteger(years) && years >= 0 && years <= 50
       ? ""
-      : "Saisissez un nombre entier d'annees compris entre 0 et 50.";
+      : "Saisissez un nombre entier d'années compris entre 0 et 50.";
   },
 };
 
@@ -434,7 +434,7 @@ const initSignupForm = () => {
 
   const updateCounter = () => {
     const length = motivation.value.trim().length;
-    counter.textContent = `${length} / ${MOTIVATION_MIN} caracteres minimum`;
+    counter.textContent = `${length} / ${MOTIVATION_MIN} caractères minimum`;
     counter.classList.toggle("counter-ok", length >= MOTIVATION_MIN);
   };
 
@@ -454,9 +454,9 @@ const initSignupForm = () => {
          <p class="summary-price">${escapeHtml(course.price)} &euro;</p>
          <dl class="info-grid">
            <div><dt>Formateur</dt><dd>${escapeHtml(course.instructor)}</dd></div>
-           <div><dt>Duree</dt><dd>${escapeHtml(course.duration)}</dd></div>
+           <div><dt>Durée</dt><dd>${escapeHtml(course.duration)}</dd></div>
          </dl>`
-      : '<p class="muted">Selectionnez une formation pour afficher son detail.</p>';
+      : '<p class="muted">Sélectionnez une formation pour afficher son détail.</p>';
   };
 
   fields.forEach((field) => {
@@ -476,13 +476,13 @@ const initSignupForm = () => {
     const invalid = fields.filter((field) => !validate(field));
 
     if (invalid.length) {
-      globalError.textContent = `Le formulaire comporte ${invalid.length} champ${invalid.length > 1 ? "s" : ""} a corriger. Les erreurs sont signalees ci-dessous.`;
+      globalError.textContent = `Le formulaire comporte ${invalid.length} champ${invalid.length > 1 ? "s" : ""} à corriger. Les erreurs sont signalées ci-dessous.`;
       show(globalError, true);
       invalid[0].focus();
       return;
     }
 
-    $("#success-message").textContent = `Merci ${form.elements.firstname.value.trim()}, votre inscription a la formation « ${selectedCourse().title} » est enregistree.`;
+    $("#success-message").textContent = `Merci ${form.elements.firstname.value.trim()}, votre inscription à la formation « ${selectedCourse().title} » est enregistrée.`;
     openModal($("#success-modal"));
 
     form.reset();
@@ -508,7 +508,7 @@ const initSignupForm = () => {
     onSuccess: (data) => {
       store.courses = data.courses ?? [];
       courseSelect.innerHTML =
-        '<option value="">Selectionnez une formation</option>' +
+        '<option value="">Sélectionnez une formation</option>' +
         store.courses
           .map(
             (course) =>
