@@ -87,10 +87,17 @@ const loadData = async ({ file, label, loader, errorBox, onSuccess }) => {
 
 let lastFocused = null;
 
+const setBackgroundInert = (isInert) => {
+  $$("body > :not(.modal):not(script)").forEach((element) => {
+    element.inert = isInert;
+  });
+};
+
 const openModal = (modal) => {
   lastFocused = document.activeElement;
 
   show(modal, true);
+  setBackgroundInert(true);
   document.body.classList.add("has-modal");
   $(".modal-close", modal).focus();
 };
@@ -99,6 +106,7 @@ const closeModal = (modal) => {
   if (modal.hidden) return;
 
   show(modal, false);
+  setBackgroundInert(false);
   document.body.classList.remove("has-modal");
   lastFocused?.focus();
 };
@@ -123,6 +131,13 @@ const initNavigation = () => {
     const isOpen = nav.classList.toggle("is-open");
 
     toggle.setAttribute("aria-expanded", String(isOpen));
+  });
+
+  nav.addEventListener("click", (event) => {
+    if (!event.target.closest("a")) return;
+
+    nav.classList.remove("is-open");
+    toggle.setAttribute("aria-expanded", "false");
   });
 };
 
@@ -185,6 +200,11 @@ const projectDetails = (project) => `
 
 /* ---------- Gabarits des formations ---------- */
 
+const enrollButton = (course, label) =>
+  course.available
+    ? `<a class="btn btn-primary" href="inscription.html?formation=${encodeURIComponent(course.id)}">${label}</a>`
+    : `<button class="btn" type="button" disabled>${label}</button>`;
+
 const courseCard = (course) => `
   <article class="card">
     <img src="${escapeHtml(course.image)}"
@@ -215,8 +235,7 @@ const courseCard = (course) => `
         <button class="btn" type="button" data-id="${escapeHtml(course.id)}">
           Voir détails
         </button>
-        <a class="btn btn-primary"
-           href="inscription.html?formation=${encodeURIComponent(course.id)}">S'inscrire</a>
+        ${enrollButton(course, "S'inscrire")}
       </p>
     </div>
   </article>
@@ -244,8 +263,7 @@ const courseDetails = (course) => `
   <ul class="list">${itemsOf(course.modules)}</ul>
 
   <p class="modal-actions">
-    <a class="btn btn-primary"
-       href="inscription.html?formation=${encodeURIComponent(course.id)}">S'inscrire maintenant</a>
+    ${enrollButton(course, "S'inscrire maintenant")}
   </p>
 `;
 
@@ -477,6 +495,7 @@ const initSignupForm = () => {
   loadData({
     file: "courses.json",
     label: "la liste des formations",
+    loader: $("#course-loader"),
     errorBox: $("#course-load-error"),
     onSuccess: ({ courses }) => {
       store.courses = courses;
@@ -486,8 +505,9 @@ const initSignupForm = () => {
         courses.map(courseOption).join("");
 
       const requestedId = new URLSearchParams(location.search).get("formation");
+      const requestedCourse = courses.find((course) => String(course.id) === requestedId);
 
-      if (requestedId) courseSelect.value = requestedId;
+      if (requestedCourse?.available) courseSelect.value = requestedId;
     },
   });
 };
