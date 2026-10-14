@@ -32,10 +32,10 @@ const debounce = (callback, delay = 250) => {
   };
 };
 
-const listOf = (items, className) =>
-  `<ul class="${className}">${items
-    .map((item) => `<li${className === "badges" ? ' class="badge"' : ""}>${escapeHtml(item)}</li>`)
-    .join("")}</ul>`;
+const itemsOf = (items, className = "") =>
+  items.map((item) => `<li class="${className}">${escapeHtml(item)}</li>`).join("");
+
+const badgesOf = (items) => `<ul class="badges">${itemsOf(items, "badge")}</ul>`;
 
 const infoOf = (rows) =>
   `<dl class="info">${rows
@@ -78,10 +78,9 @@ const closeModal = (modal) => {
 };
 
 const initModals = () => {
-  $$(".modal").forEach((modal) => {
-    modal.addEventListener("click", (event) => {
-      if (event.target.closest("[data-close-modal]")) closeModal(modal);
-    });
+  document.addEventListener("click", (event) => {
+    const closer = event.target.closest("[data-close-modal]");
+    if (closer) closeModal(closer.closest(".modal"));
   });
 
   document.addEventListener("keydown", (event) => {
@@ -106,7 +105,7 @@ const projectCard = (project) => `
       <h3>${escapeHtml(project.title)}</h3>
       <p>Client : ${escapeHtml(project.client)}</p>
       <p class="card-meta">${escapeHtml(project.category)} &middot; ${escapeHtml(project.year)} &middot; ${escapeHtml(project.duration)}</p>
-      ${listOf(project.technologies, "badges")}
+      ${badgesOf(project.technologies)}
       <p class="card-actions">
         <button class="btn btn-primary" type="button" data-id="${escapeHtml(project.id)}">Voir détails</button>
       </p>
@@ -124,9 +123,9 @@ const projectDetails = (project) => `
     ["Durée", project.duration],
   ])}
   <h3>Technologies</h3>
-  ${listOf(project.technologies, "badges")}
+  ${badgesOf(project.technologies)}
   <h3>Fonctionnalités</h3>
-  ${listOf(project.features, "list")}
+  <ul class="list">${itemsOf(project.features)}</ul>
   <p class="modal-actions">
     <a class="btn btn-primary" href="${escapeHtml(safeUrl(project.url))}" target="_blank" rel="noopener">Visiter le site</a>
   </p>
@@ -144,7 +143,7 @@ const courseCard = (course) => `
       </ul>
       <p class="card-meta">${escapeHtml(course.duration)} &middot; ★ ${escapeHtml(course.rating)} / 5 &middot; ${escapeHtml(course.students)} étudiants</p>
       <p class="card-price">${escapeHtml(course.price)} €</p>
-      ${listOf(course.technologies, "badges")}
+      ${badgesOf(course.technologies)}
       <p class="card-actions">
         <button class="btn" type="button" data-id="${escapeHtml(course.id)}">Voir détails</button>
         <a class="btn btn-primary" href="inscription.html?formation=${encodeURIComponent(course.id)}">S'inscrire</a>
@@ -165,9 +164,9 @@ const courseDetails = (course) => `
     ["Note", `★ ${course.rating} / 5 (${course.students} étudiants)`],
   ])}
   <h3>Technologies</h3>
-  ${listOf(course.technologies, "badges")}
+  ${badgesOf(course.technologies)}
   <h3>Modules</h3>
-  ${listOf(course.modules, "list")}
+  <ul class="list">${itemsOf(course.modules)}</ul>
   <p class="modal-actions">
     <a class="btn btn-primary" href="inscription.html?formation=${encodeURIComponent(course.id)}">S'inscrire maintenant</a>
   </p>
@@ -176,64 +175,62 @@ const courseDetails = (course) => `
 const courseOption = (course) =>
   `<option value="${escapeHtml(course.id)}"${course.available ? "" : " disabled"}>${escapeHtml(course.title)} (${escapeHtml(course.level)}, ${escapeHtml(course.price)} €)${course.available ? "" : " - complet"}</option>`;
 
+// selects : nom du filtre -> [champ de l'élément filtré, liste d'options dans la réponse de l'API]
 const CATALOGS = [
   {
-    key: "projects",
     prefix: "project",
     label: "les projets",
     noun: "projet",
-    selects: { tech: "technologies", category: "categories" },
-    searchableText: (project) => [project.title, project.client, project.description],
-    matches: (project, { tech, category }) =>
-      (!tech || project.technologies.includes(tech)) &&
-      (!category || project.category === category),
+    searchFields: ["title", "client", "description"],
+    selects: { tech: ["technologies", "technologies"], category: ["category", "categories"] },
     card: projectCard,
     details: projectDetails,
   },
   {
-    key: "courses",
     prefix: "course",
     label: "les formations",
     noun: "formation",
-    selects: { category: "categories", level: "levels", tech: "technologies" },
-    searchableText: (course) => [course.title, course.description, course.instructor],
-    matches: (course, { category, level, tech }) =>
-      (!category || course.category === category) &&
-      (!level || course.level === level) &&
-      (!tech || course.technologies.includes(tech)),
+    searchFields: ["title", "description", "instructor"],
+    selects: {
+      category: ["category", "categories"],
+      level: ["level", "levels"],
+      tech: ["technologies", "technologies"],
+    },
     card: courseCard,
     details: courseDetails,
   },
 ];
 
-const initCatalog = (catalog) => {
-  const { prefix, key } = catalog;
+const initCatalog = ({ prefix, label, noun, searchFields, selects, card, details }) => {
   const grid = $(`#${prefix}-grid`);
   if (!grid) return;
 
+  const key = `${prefix}s`;
   const search = $(`#${prefix}-search`);
   const empty = $(`#${prefix}-empty`);
   const count = $(`#${prefix}-count`);
-  const modal = $(`#${prefix}-modal`);
-  const selects = Object.keys(catalog.selects).map((name) => [name, $(`#${prefix}-${name}`)]);
+  const filters = Object.entries(selects).map(([name, [field, list]]) => ({
+    select: $(`#${prefix}-${name}`),
+    field,
+    list,
+  }));
 
   const render = () => {
     const query = search.value.trim().toLowerCase();
-    const choices = Object.fromEntries(selects.map(([name, select]) => [name, select.value]));
     const items = store[key].filter(
       (item) =>
-        catalog.searchableText(item).join(" ").toLowerCase().includes(query) &&
-        catalog.matches(item, choices),
+        searchFields.map((field) => item[field]).join(" ").toLowerCase().includes(query) &&
+        filters.every(({ select, field }) => !select.value || [].concat(item[field]).includes(select.value)),
     );
 
-    grid.innerHTML = items.map(catalog.card).join("");
+    grid.innerHTML = items.map(card).join("");
     show(empty, items.length === 0);
     show(count, true);
-    count.textContent = `${plural(items.length, catalog.noun)} sur ${store[key].length}`;
+    count.textContent = `${plural(items.length, noun)} sur ${store[key].length}`;
   };
 
   search.addEventListener("input", debounce(render));
-  selects.forEach(([, select]) => select.addEventListener("change", render));
+  filters.forEach(({ select }) => select.addEventListener("change", render));
   // "reset" est émis avant la remise à zéro des champs : on attend avant de re-filtrer
   $(`#${prefix}-filters`).addEventListener("reset", () => setTimeout(render));
 
@@ -243,19 +240,19 @@ const initCatalog = (catalog) => {
 
     const item = store[key].find((entry) => String(entry.id) === button.dataset.id);
     $(`#${prefix}-modal-title`).textContent = item.title;
-    $(`#${prefix}-modal-body`).innerHTML = catalog.details(item);
-    openModal(modal);
+    $(`#${prefix}-modal-body`).innerHTML = details(item);
+    openModal($(`#${prefix}-modal`));
   });
 
   loadData({
     file: `${key}.json`,
-    label: catalog.label,
+    label,
     loader: $(`#${prefix}-loader`),
     errorBox: $(`#${prefix}-error`),
     onSuccess: (data) => {
       store[key] = data[key];
-      selects.forEach(([name, select]) => {
-        select.innerHTML += optionsOf(data[catalog.selects[name]]);
+      filters.forEach(({ select, list }) => {
+        select.innerHTML += optionsOf(data[list]);
       });
       render();
     },
@@ -326,10 +323,7 @@ const initSignupForm = () => {
 
   fields.forEach((field) => {
     field.addEventListener("blur", () => validate(field));
-    field.addEventListener(
-      field.tagName === "SELECT" ? "change" : "input",
-      debounce(() => validate(field), 200),
-    );
+    field.addEventListener("input", () => validate(field));
   });
 
   motivation.addEventListener("input", updateCounter);
@@ -352,7 +346,6 @@ const initSignupForm = () => {
     openModal($("#success-modal"));
 
     form.reset();
-    resetStates();
   });
 
   updateCounter();
